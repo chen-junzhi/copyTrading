@@ -4,14 +4,20 @@ import { TrendCharts, Menu, Search, Right } from '@element-plus/icons-vue'
 import { listData } from '@/utils/data'
 import List from '@/components/CopyTrade/List.vue'
 
+const activeTab = ref('top')
+
 const keyword = ref('')
+
+const toMore = () => {
+  activeTab.value = 'all'
+}
 </script>
 <template>
   <div class="trader-list">
     <div class="trader-list__switch-box">
       <div class="trader-list__switch-box-left">
-        <el-tabs class="tabs">
-          <el-tab-pane>
+        <el-tabs class="tabs" v-model="activeTab">
+          <el-tab-pane name="top">
             <template #label>
               <span class="custom-tabs-label">
                 <el-icon class="icon">
@@ -27,7 +33,7 @@ const keyword = ref('')
                     <div class="leader-recommend-title">{{ item.title }}</div>
                     <div class="leader-recommend-subTitle">{{ item.description }}</div>
                   </div>
-                  <div class="leader-recommend_more">
+                  <div class="leader-recommend_more" @click="toMore()">
                     了解详情
                     <el-icon class="arrow">
                       <Right />
@@ -40,7 +46,7 @@ const keyword = ref('')
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane>
+          <el-tab-pane name="all">
             <template #label>
               <span class="custom-tabs-label">
                 <el-icon class="icon">
@@ -139,6 +145,7 @@ const keyword = ref('')
         color: var(--el-color-primary);
         font-size: 16px;
         font-weight: 600;
+        cursor: pointer;
         .arrow {
           margin-left: 10px;
         }

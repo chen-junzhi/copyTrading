@@ -18,9 +18,6 @@ const cardList = computed(() => {
 })
 
 const currentIndex = ref(0)
-const handleChange = (index) => {
-  currentIndex.value = index
-}
 
 const defaultBg = 'https://s1.bycsi.com/bybit/deadpool/9c17a00e648811ed890b8e79ed0a92f0.png'
 const bannerBg = ref([
@@ -39,58 +36,131 @@ const rate = computed(() => {
     }
   }
 })
+
+const metricsValue = computed(() => {
+  return (index, value) => {
+    if (index === 1) {
+      return '+' + (value / 100) + '%'
+    } else if (index === 2) {
+      return (value / 100) + '%'
+    } else if (index === 3) {
+      return (+(value / 100000000).toFixed(2)).toLocaleString()
+    }
+  }
+})
+
+const handleFollow = (data) => {
+  console.log(data)
+}
 </script>
 
 <template>
-  <el-carousel :interval="4000"
-               height="200px"
-               indicator-position="none"
-               :autoplay="false"
-               :loop="false"
-               arrow="always"
-               @change="handleChange">
-    <el-carousel-item v-for="page in totalPage"
-                      :key="page">
-      <div class="list-box">
-        <div class="copyTrade-recommendCard"
-             v-for="(cardData, cardIndex) in cardList"
-             :class="{ ['card' + cardIndex]: page === 1 }"
-             :key="cardData.nickName">
-          <div class="copyTrade-recommendCard-top">
-            <img class="copyTrade-recommendCard-top-banner"
-                 :src="page === 1 ? bannerBg[cardIndex] : defaultBg" />
-            <div class="copyTrade-recommendCard-top-tips">{{ `No.0${currentIndex * 4 + cardIndex + 1}` }}</div>
-            <div class="copyTrade-recommendCard-top-inf">
-              <div class="copyTrade-recommendCard-avatar-box">
-                <img :src="cardData.profilePhoto"
-                     loading="lazy"
-                     class="copyTrade-recommendCard-avatar-img">
-              </div>
-              <div class="copyTrade-recommendCard-top-nameBox">
-                <div class="copyTrade-recommendCard-top-name">
-                  <div class="leader-grade_level-name-box">
-                    <div class="leader-grade_level-name">Crypto Musk</div>
-                  </div>
+  <div class="list__overflow">
+    <div class="list-box">
+      <div class="copyTrade-recommendCard"
+            v-for="(cardData, cardIndex) in listData"
+            :class="[['card' + cardIndex]]"
+            :key="cardData.nickName"
+            @click="handleFollow(cardData)">
+        <div class="copyTrade-recommendCard-top">
+          <img class="copyTrade-recommendCard-top-banner"
+                :src="cardIndex < 3 ? bannerBg[cardIndex] : defaultBg" />
+          <div class="copyTrade-recommendCard-top-tips">{{ `No.0${currentIndex * 4 + cardIndex + 1}` }}</div>
+          <div class="copyTrade-recommendCard-top-inf">
+            <div class="copyTrade-recommendCard-avatar-box">
+              <img :src="cardData.profilePhoto"
+                    loading="lazy"
+                    class="copyTrade-recommendCard-avatar-img">
+            </div>
+            <div class="copyTrade-recommendCard-top-nameBox">
+              <div class="copyTrade-recommendCard-top-name">
+                <div class="leader-grade_level-name-box">
+                  <div class="leader-grade_level-name">Crypto Musk</div>
                 </div>
-                <div class="copyTrade-recommendCard-top-followers">
-                  {{ cardData.currentFollowerCount }} 跟单人数
-                  <div class="copyTrade-recommendCard-top-followers-percent share-grow-text">
-                    <el-icon class="icon" :class="{ 'top': cardData.currentFollowerCount - cardData.yesterdayMaxFollowerCount >= 0 }">
-                      <CaretTop v-if="cardData.currentFollowerCount - cardData.yesterdayMaxFollowerCount >= 0" />
-                      <CaretBottom v-else />
-                    </el-icon>{{ rate(cardData.yesterdayMaxFollowerCount, cardData.currentFollowerCount) }}
-                  </div>
+              </div>
+              <div class="copyTrade-recommendCard-top-followers">
+                {{ cardData.currentFollowerCount }} 跟单人数
+                <div class="copyTrade-recommendCard-top-followers-percent share-grow-text">
+                  <el-icon class="icon" :class="{ 'top': cardData.currentFollowerCount - cardData.yesterdayMaxFollowerCount >= 0 }">
+                    <CaretTop v-if="cardData.currentFollowerCount - cardData.yesterdayMaxFollowerCount >= 0" />
+                    <CaretBottom v-else />
+                  </el-icon>{{ rate(cardData.yesterdayMaxFollowerCount, cardData.currentFollowerCount) }}
                 </div>
               </div>
             </div>
           </div>
         </div>
+        <div class="copyTrade-recommendCard-bottom">
+          <div class="copyTrade-recommendCard-detail">
+            <div class="copyTrade-recommendCard-detail-item">
+              <div class="copyTrade-recommendCard-detail-item-title-wrap">
+                <div class="copyTrade-recommendCard-detail-item-title-wrap-title">
+                  <el-tooltip
+                    effect="dark"
+                    placement="top"
+                  >
+                    <template #content>
+                      <p style="max-width: 200px;">{{ cardData.metricsInfoList?.[0]?.metricsDesc }}</p>
+                    </template>
+                    <div class="copyTrade-recommendCard-title-inside">
+                      <div class="copyTrade-recommendCard-title-text">
+                        {{ cardData.metricsInfoList?.[0]?.metricsName }}
+                      </div>
+                      <div class="copyTrade-recommendCard-title-tips">
+                        {{ cardData.metricsInfoList?.[0]?.metricsDuration }}
+                      </div>
+                    </div>
+                  </el-tooltip>
+                </div>
+                <div class="copyTrade-recommendCard-detail-item-title-wrap-value">
+                  {{ '+' + (cardData.metricsInfoList?.[0]?.metricsValue / 100) + '%' }}
+                </div>
+              </div>
+              <div class="copyTrade-recommendCard-detail-line"></div>
+            </div>
+            <div class="copyTrade-recommendCard-detail-item" v-for="(item, index) in cardData.metricsInfoList" :key="index">
+              <div class="copyTrade-recommendCard-title" v-if="index > 0">
+                <el-tooltip
+                  effect="dark"
+                  placement="top"
+                >
+                  <template #content>
+                    <p style="max-width: 200px;">{{ cardData.metricsInfoList?.[index]?.metricsDesc }}</p>
+                  </template>
+                  <div class="copyTrade-recommendCard-title-inside">
+                    <div class="copyTrade-recommendCard-title-text">
+                      {{ cardData.metricsInfoList?.[index]?.metricsName }}
+                    </div>
+                    <div class="copyTrade-recommendCard-title-tips" v-if="index !== cardData.metricsInfoList.length - 1">
+                      {{ cardData.metricsInfoList?.[index]?.metricsDuration }}
+                    </div>
+                  </div>
+                </el-tooltip>
+              </div>
+              <div class="copyTrade-recommendCard-value share-grow-text" v-if="index > 0">
+                {{ metricsValue(index, cardData.metricsInfoList?.[index]?.metricsValue) }}
+              </div>
+            </div>
+          </div>
+          <span class="trader-follow-btn-container">
+            <el-button type="primary" class="btn">跟单</el-button>
+          </span>
+        </div>
       </div>
-    </el-carousel-item>
-  </el-carousel>
+    </div>
+  </div>
 </template>
 
+<style>
+.el-tooltip__popper {
+  max-width: 100px;
+}
+</style>
 <style lang="scss" scoped>
+.list__overflow {
+  overflow-x: auto;
+  display: flex;
+}
 .list-box {
   display: flex;
   .copyTrade-recommendCard {
@@ -156,18 +226,18 @@ const rate = computed(() => {
       display: flex;
     }
     .copyTrade-recommendCard-avatar-img {
-      width: 70px;
+      width: 80px;
       height: 80px;
       z-index: 9;
       overflow: hidden;
-      margin-top: 30px;
+      margin-top: 40px;
       display: block;
       -o-object-fit: cover;
       object-fit: cover;
       margin-left: 20px;
     }
     .copyTrade-recommendCard-top-nameBox {
-      margin-top: 44px;
+      margin-top: 54px;
       color: #121214;
       max-width: 184px;
       z-index: 2;
@@ -212,6 +282,67 @@ const rate = computed(() => {
               color: #20b26c;
             }
           }
+        }
+      }
+    }
+    .copyTrade-recommendCard-bottom {
+      padding-bottom: 24px;
+      .copyTrade-recommendCard-detail {
+        padding: 12px 24px 16px;
+        &-item {
+          width: 100%;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 2px;
+          &-title-wrap-title {
+            width: fit-content;
+          }
+          &-title-wrap-value {
+            font-weight: 700;
+            font-size: 28px;
+            line-height: 40px;
+            margin-top: 6px;
+            margin-bottom: 8px;
+          }
+          .copyTrade-recommendCard-value {
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 22px;
+            color: #121214;
+          }
+        }
+        .copyTrade-recommendCard-title-inside {
+          display: flex;
+          align-items: center;
+          .copyTrade-recommendCard-title-text {
+            font-size: 12px;
+            line-height: 18px;
+            color: #81858c;
+          }
+          .copyTrade-recommendCard-title-tips {
+            margin-left: 4px;
+            padding: 0 4.2px;
+            height: 14.4px;
+            font-size: 12px;
+            zoom: .83;
+            border: 0.5px solid #adb1b8;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            color: #81858c;
+          }
+        }
+      }
+      .trader-follow-btn-container {
+        width: calc(100% - 48px);
+        display: inline-block;
+        margin-left: 24px;
+        .btn {
+          width: 100%;
         }
       }
     }
