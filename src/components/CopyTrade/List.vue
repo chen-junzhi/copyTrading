@@ -1,20 +1,13 @@
 <script setup>
 import { ref, computed } from "vue"
 import { CaretTop, CaretBottom } from '@element-plus/icons-vue'
+import chartLine from './ChartLine.vue'
 
 const props = defineProps({
   listData: {
     type: Array,
     default: () => []
   }
-})
-
-const totalPage = computed(() => {
-  return Math.ceil(props.listData.length / 4)
-})
-
-const cardList = computed(() => {
-  return props.listData.slice(currentIndex.value * 4, currentIndex.value * 4 + 4)
 })
 
 const currentIndex = ref(0)
@@ -75,7 +68,7 @@ const handleFollow = (data) => {
             <div class="copyTrade-recommendCard-top-nameBox">
               <div class="copyTrade-recommendCard-top-name">
                 <div class="leader-grade_level-name-box">
-                  <div class="leader-grade_level-name">Crypto Musk</div>
+                  <div class="leader-grade_level-name">{{ cardData.nickName }}</div>
                 </div>
               </div>
               <div class="copyTrade-recommendCard-top-followers">
@@ -116,7 +109,9 @@ const handleFollow = (data) => {
                   {{ '+' + (cardData.metricsInfoList?.[0]?.metricsValue / 100) + '%' }}
                 </div>
               </div>
-              <div class="copyTrade-recommendCard-detail-line"></div>
+              <div class="copyTrade-recommendCard-detail-line">
+                <chartLine :data="cardData.yieldTrendList" :id="cardData.leaderUserId + '-' + cardIndex"></chartLine>
+              </div>
             </div>
             <div class="copyTrade-recommendCard-detail-item" v-for="(item, index) in cardData.metricsInfoList" :key="index">
               <div class="copyTrade-recommendCard-title" v-if="index > 0">
@@ -296,6 +291,11 @@ const handleFollow = (data) => {
           justify-content: space-between;
           align-items: center;
           margin-bottom: 2px;
+          .copyTrade-recommendCard-detail-line {
+            width: 144px;
+            height: 52px;
+            margin-top: 4px;
+          }
           &-title-wrap-title {
             width: fit-content;
           }
