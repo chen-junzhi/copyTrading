@@ -24,7 +24,7 @@ const cardData = computed(() => {
 
 
 onMounted(() => {
-  console.log(cardData.value)
+  // console.log(cardData.value)
   const linePlot = new Area(props.id, {
     padding: [10, -6, 4, 38],
     autoFit: true,

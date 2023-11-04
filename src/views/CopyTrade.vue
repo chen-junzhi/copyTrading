@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import { TrendCharts, Menu, Search, Right } from '@element-plus/icons-vue'
 import { listData } from '@/utils/data'
 import List from '@/components/CopyTrade/List.vue'
+import All from '@/components/CopyTrade/All.vue'
+import { ElMessage } from 'element-plus'
 
 const activeTab = ref('top')
 
@@ -10,6 +12,11 @@ const keyword = ref('')
 
 const toMore = () => {
   activeTab.value = 'all'
+}
+
+const handleSearch = () => {
+  ElMessage.success(`搜索内容：${keyword.value}`)
+  toMore()
 }
 </script>
 <template>
@@ -55,7 +62,7 @@ const toMore = () => {
                 <span>全部交易达人</span>
               </span>
             </template>
-            列表
+            <All />
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -64,7 +71,8 @@ const toMore = () => {
                   class="search-input"
                   placeholder="搜索交易达人"
                   clearable
-                  :suffix-icon="!keyword ? Search : ''" />
+                  :suffix-icon="!keyword ? Search : ''"
+                  @keyup.enter="handleSearch" />
       </div>
     </div>
   </div>
