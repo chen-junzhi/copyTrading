@@ -2,6 +2,8 @@
 import { ref, computed } from "vue"
 import { CaretTop, CaretBottom } from '@element-plus/icons-vue'
 import chartLine from './ChartLine.vue'
+import { useFollowWord } from '@/stores/useFollowWord';
+const { followWord, toDetail } = useFollowWord()
 
 const props = defineProps({
   listData: {
@@ -42,9 +44,6 @@ const metricsValue = computed(() => {
   }
 })
 
-const handleFollow = (data) => {
-  console.log(data)
-}
 </script>
 
 <template>
@@ -54,7 +53,7 @@ const handleFollow = (data) => {
             v-for="(cardData, cardIndex) in listData"
             :class="[['card' + cardIndex]]"
             :key="cardData.nickName"
-            @click="handleFollow(cardData)">
+            @click="toDetail(cardData)">
         <div class="copyTrade-recommendCard-top">
           <img class="copyTrade-recommendCard-top-banner"
                 :src="cardIndex < 3 ? bannerBg[cardIndex] : defaultBg" />
@@ -138,7 +137,7 @@ const handleFollow = (data) => {
             </div>
           </div>
           <span class="trader-follow-btn-container">
-            <el-button type="primary" class="btn">跟单</el-button>
+            <el-button type="primary" class="btn" @click.stop="followWord(cardData)">跟单</el-button>
           </span>
         </div>
       </div>

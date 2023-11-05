@@ -1,5 +1,5 @@
 <script setup>
-import { Line, Area } from '@antv/g2plot'
+import { Area } from '@antv/g2plot'
 import { computed, onMounted } from 'vue'
 
 const props = defineProps({

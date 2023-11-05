@@ -1,4 +1,4 @@
-<script setup>
+<script setup name="CopyTrade">
 import { ref } from 'vue'
 import { TrendCharts, Menu, Search, Right } from '@element-plus/icons-vue'
 import { listData } from '@/utils/data'

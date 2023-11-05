@@ -1,5 +1,7 @@
 <script setup>
 import { ElMessage } from 'element-plus'
+import { useFollowWord } from '@/stores/useFollowWord';
+const { followWord, toDetail } = useFollowWord()
 
 const columns = [
   {
@@ -204,6 +206,7 @@ const handlePageChanged = (pageNo) => {
     :data="tableData"
     :default-sort="{ prop: 'totalAllFollowProfit', order: 'descending' }"
     style="width: 100%"
+    @row-click="toDetail"
   >
     <el-table-column
       v-for="column in columns"
@@ -232,7 +235,7 @@ const handlePageChanged = (pageNo) => {
         </template>
         <template v-else-if="column.key === 'action'">
           <div class="btn-wrap">
-            <el-button :type="scope.row.status === 2 ? 'danger' : 'primary'">
+            <el-button :type="scope.row.status === 2 ? 'danger' : 'primary'" @click.stop="followWord(scope.row)">
               <span>{{ scope.row.status === 2 ? '已满员' : '跟单' }}</span>
               <div v-if="scope.row.status === 0" class="btn-mask"></div>
             </el-button>
@@ -251,6 +254,9 @@ const handlePageChanged = (pageNo) => {
 .el-table {
   color: rgba(0,0,0,.85);
   font-weight: 500;
+  ::v-deep(tr) {
+    cursor: pointer;
+  }
 }
 .user {
   display: flex;
