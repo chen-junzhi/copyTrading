@@ -503,7 +503,7 @@ const handleViewAll = () => {
       }
     }
     .tabs {
-      padding: 6px 0 20px;
+      padding: 6px 0 0px;
     }
     .body {
       padding: 0 20px 20px;
